@@ -52,6 +52,7 @@ public class Client extends JFrame {
             connectToServer();  // Connect to one specific server.
             setupStreams();
             whileChatting();
+            Kafka kafka = new Kafka();
         } catch (EOFException eofException) {
             showMessage("\n Client terminated connection");
         } catch (IOException ioException) {
