@@ -44,15 +44,28 @@ public class Client extends JFrame {
         setVisible(true);
     }
 
+    public void startRunning() {
+            System.out.println("Try to connect kafka server");
+            Kafka kafka = new Kafka();
+            System.out.println(" ... server connected");
+    }
+
     /**
      * Connect to the server (main public).
      */
+    /*
     public void startRunning() {
         try {
             connectToServer();  // Connect to one specific server.
             setupStreams();
             whileChatting();
+<<<<<<< HEAD
             Kafka kafka = new Kafka();
+=======
+            System.out.println("Try to connect kafka server");
+            Kafka kafka = new Kafka();
+            System.out.println(" ... server connected");
+>>>>>>> b98689f (init)
         } catch (EOFException eofException) {
             showMessage("\n Client terminated connection");
         } catch (IOException ioException) {
@@ -61,6 +74,7 @@ public class Client extends JFrame {
             closeStream();
         }
     }
+        */
 
     /**
      * Socket connection to server.
