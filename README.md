@@ -4,6 +4,8 @@
 * https://github.com/provectus/kafka-ui
 * https://hub.docker.com/r/bitnami/kafka
 
+* https://docs.confluent.io/kafka-clients/java/current/overview.html
+
 ### Docker
 
 ```bash

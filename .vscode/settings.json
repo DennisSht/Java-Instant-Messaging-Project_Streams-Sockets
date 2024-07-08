@@ -1,3 +1,6 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.completion.enabled": true,
+    "java.format.enabled": true,
+    "java.import.maven.enabled": true,
 }

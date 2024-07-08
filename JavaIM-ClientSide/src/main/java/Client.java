@@ -1,7 +1,15 @@
 import java.io.*;
 import java.net.*;
+import java.util.Arrays;
+import java.util.Properties;
 import java.awt.*;
 import javax.swing.*;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.producer.*;
+
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.Serdes.StringSerde;
 
 public class Client extends JFrame {
 
@@ -13,6 +21,14 @@ public class Client extends JFrame {
     private String serverIP; // Server IP address.
     private int portNumber; // Port Number.
     private Socket connection; // Socket connection.
+
+    String bootstrapServers = "127.0.0.1:9092";
+    String groupId = "my-fourth-application";
+    String topic = "demo_java";
+
+    KafkaConsumer<String, String> consumer;
+    KafkaProducer<String, String> producer;
+
 
     /**
      * Constructor method.
@@ -42,12 +58,47 @@ public class Client extends JFrame {
         add(new JScrollPane(chatWindow), BorderLayout.CENTER);
         setSize(325, 150);
         setVisible(true);
+
+        configKafka();
+    }
+
+    private void configKafka() {
+        Properties properties = new Properties();
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty("key.serializer", StringSerializer.class.getName());
+        properties.setProperty("value.serializer", StringSerializer.class.getName());
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        System.out.println("Try to connect kafka server");
+
+        consumer = new KafkaConsumer<>(properties);
+        consumer.subscribe(Arrays.asList(topic));
+
+        producer = new KafkaProducer<>(properties);
+        
+        System.out.println(" ... server connected");
     }
 
     public void startRunning() {
-            System.out.println("Try to connect kafka server");
-            Kafka kafka = new Kafka();
-            System.out.println(" ... server connected");
+        String message = "";
+        try {
+            while (!message.equals("SERVER - END")) {
+                ConsumerRecords<String, String> records = consumer.poll(java.time.Duration.ofMillis(100));
+                for (ConsumerRecord<String, String> record : records) {
+                    System.out.println("Key: " + record.key() + ", Value: " + record.value());
+                    System.out.println("Partition: " + record.partition() + ", Offset: " + record.offset());
+                    message = record.value();
+                    showMessage("\n" + message);                    
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeStream();
+        }
     }
 
     /**
@@ -59,13 +110,6 @@ public class Client extends JFrame {
             connectToServer();  // Connect to one specific server.
             setupStreams();
             whileChatting();
-<<<<<<< HEAD
-            Kafka kafka = new Kafka();
-=======
-            System.out.println("Try to connect kafka server");
-            Kafka kafka = new Kafka();
-            System.out.println(" ... server connected");
->>>>>>> b98689f (init)
         } catch (EOFException eofException) {
             showMessage("\n Client terminated connection");
         } catch (IOException ioException) {
@@ -133,11 +177,17 @@ public class Client extends JFrame {
         }
     }
 
+    private void sendMessage(String message) {
+        producer.send(new ProducerRecord<>(topic, message));
+        showMessage("\nCLIENT - " + message);
+    }
+
     /**
      * Send a message to the server.
      *
      * @param message Message to be sent to the server (assumes socket connection is established).
      */
+    /*
     private void sendMessage(String message) {
         try {
             output.writeObject("CLIENT - " + message);
@@ -147,6 +197,7 @@ public class Client extends JFrame {
             chatWindow.append("\n Error.  Unable to send message.  Please retry message.");
         }
     }
+    */
 
     /**
      * Changes / updates chat window.

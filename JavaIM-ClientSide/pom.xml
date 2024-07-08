@@ -45,10 +45,8 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <mainClass>ClientTest</mainClass>
+              <classpathPrefix>${project.build.directory}/lib</classpathPrefix>
             </manifest>
-            <manifestEntries>
-              <Class-Path>./lib</Class-Path>
-            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -69,6 +67,30 @@
             </execution>
         </executions>
     </plugin>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>ClientTest</mainClass>
+              </manifest>
+            </archive>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+
     </plugins>
   </build>
 </project>
