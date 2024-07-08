@@ -5,6 +5,7 @@
 * https://hub.docker.com/r/bitnami/kafka
 
 * https://docs.confluent.io/kafka-clients/java/current/overview.html
+* https://kafka.apache.org/quickstart
 
 ### Docker
 
